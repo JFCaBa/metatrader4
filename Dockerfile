@@ -9,7 +9,13 @@ RUN dpkg --add-architecture i386 && \
     apt-get install -y \
     wget \
     gnupg2 \
-    software-properties-common && \
+    software-properties-common \
+    xvfb \
+    x11vnc \
+    supervisor \
+    procps \
+    fluxbox \
+    xterm && \
     mkdir -pm755 /etc/apt/keyrings && \
     wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
 
@@ -23,11 +29,20 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Install noVNC and websockify
+RUN apt-get update && \
+    apt-get install -y git python3-numpy && \
+    git clone https://github.com/novnc/noVNC.git /opt/novnc && \
+    git clone https://github.com/novnc/websockify.git /opt/novnc/utils/websockify && \
+    ln -s /opt/novnc/vnc.html /opt/novnc/index.html && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Create working directory
 WORKDIR /mt4
 ENV HOME=/mt4
 ENV WINEPREFIX=/mt4/.mt4
-ENV DISPLAY=:2
+ENV DISPLAY=:99
 
 # Download MetaTrader 4
 RUN wget https://download.mql5.com/cdn/web/metaquotes.software.corp/mt4/mt4oldsetup.exe -O mt4setup.exe
@@ -36,4 +51,14 @@ RUN wget https://download.mql5.com/cdn/web/metaquotes.software.corp/mt4/mt4oldse
 COPY install-mt4.sh /mt4/
 RUN chmod +x /mt4/install-mt4.sh
 
-CMD ["/bin/bash"]
+# Create VNC password directory
+RUN mkdir -p /root/.vnc
+
+# Copy startup script
+COPY start-vnc.sh /mt4/
+RUN chmod +x /mt4/start-vnc.sh
+
+# Expose VNC port and noVNC web port
+EXPOSE 5900 6080
+
+CMD ["/mt4/start-vnc.sh"]

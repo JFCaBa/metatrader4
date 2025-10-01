@@ -11,6 +11,7 @@ docker build -t mt4-wine .
 echo ""
 echo "Running MT4 container..."
 docker run -it --rm \
+  --name metatrader4 \
   -v /opt/mt4/data:/mt4/.mt4 \
   -v /opt/mt4/shared:/mt4/shared \
   -e DISPLAY=:2 \
