@@ -1,6 +1,6 @@
 # MetaTrader 4 on Docker
 
-Run MetaTrader 4 in a Docker container with proper Wine and 32-bit support on RHEL/AlmaLinux.
+Run MetaTrader 4 in a Docker container with proper Wine and 32-bit support on RHEL/AlmaLinux, not tested on other distributions.
 
 ## Prerequisites
 
