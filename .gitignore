@@ -1,0 +1,10 @@
+# MT4 data and user files
+data/
+shared/
+
+# Backup files
+*.tar.gz
+*.backup
+
+# Docker build cache
+.dockerignore
